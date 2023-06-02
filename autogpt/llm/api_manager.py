@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import openai
+import json
 
 from autogpt.config import Config
 from autogpt.llm.modelsinfo import COSTS
@@ -42,6 +43,15 @@ class ApiManager(metaclass=Singleton):
         cfg = Config()
         if temperature is None:
             temperature = cfg.temperature
+
+        print("")
+        print("+"*200)
+        print("request:")
+        print("="*200)
+        #print(messages)
+        print(json.dumps(messages, indent=4, separators=(',', ':')))
+        print("-"*200)
+
         if deployment_id is not None:
             response = openai.ChatCompletion.create(
                 deployment_id=deployment_id,
@@ -64,6 +74,14 @@ class ApiManager(metaclass=Singleton):
             prompt_tokens = response.usage.prompt_tokens
             completion_tokens = response.usage.completion_tokens
             self.update_cost(prompt_tokens, completion_tokens, model)
+
+        print("")
+        print("response:")
+        print("="*200)
+        #print(response)
+        print(json.dumps(response, indent=4, separators=(',', ':')))
+        print("-"*200)
+
         return response
 
     def update_cost(self, prompt_tokens, completion_tokens, model):
